@@ -7,24 +7,50 @@ from sqlalchemy import create_engine
 from eralchemy import render_er
 
 Base = declarative_base()
+#
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+class User(Base):
+    __tablename__ = 'User'
+    userId = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    password = Column(Integer, nullable=False )
+    favouriteId = Column(Integer, ForeignKey("favourite.favouriteId" ))
+    favourite = relationship("Favourite")
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+class Favourite(Base):
+    __tablename__ = 'favourite'
+    favouriteId = Column(Integer, primary_key=True)
+    favouritePlanetId = Column(Integer, ForeignKey("planet.planetId"))
+    favouriteCharacterId = Column(Integer, ForeignKey("character.characterId"))
+    favouriteVehicleId = Column(Integer, ForeignKey("vehicle.vehicleId"))
+    planet = relationship("Planet")
+    character = relationship("Character")
+    vehicle = relationship("Vehicle")
+
+class Planet(Base):
+    __tablename__ = 'planet'
+    planetId = Column(Integer, primary_key=True)
+    name = Column(String(250))
+    climate = Column(String(250))
+    size = Column(String(250), nullable=False)
+    favourite = relationship("favourite")
+
+class Character(Base):
+    __tablename__ = 'character'
+    characterId = Column(Integer, primary_key=True)
+    name = Column(String(250))
+    lastName = Column(String(250))
+    birthday = Column(Integer, nullable=False)
+    favourite = relationship("favourite")
+
+class Vehicle(Base):
+    __tablename__ = 'vehicle'
+    vehicleId = Column(Integer, primary_key=True)
+    model = Column(String(250), nullable=False)
+    size = Column(Integer, nullable=False)
+    cost = Column(Integer, nullable=False)
+    favourite = relationship("favourite")
+
 
     def to_dict(self):
         return {}
